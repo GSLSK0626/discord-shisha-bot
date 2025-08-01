@@ -66,3 +66,13 @@ def delete_shisha_log(log_id: int):
         c = conn.cursor()
         c.execute("DELETE FROM shisha_logs WHERE id = ?", (log_id,))
         conn.commit()
+
+def update_shisha_log(log_id, date, shop_name, main_flavor, sub_flavors, comment):
+    with get_db() as conn:
+        c = conn.cursor()
+        c.execute('''
+            UPDATE shisha_logs
+            SET date = ?, shop_name = ?, main_flavor = ?, sub_flavor = ?, comment = ?
+            WHERE id = ?
+        ''', (date, shop_name, main_flavor, sub_flavors, comment, log_id))
+        conn.commit()

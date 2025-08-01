@@ -6,10 +6,14 @@ async def setup_commands(bot):
     from .add_log import setup as add_log_setup
     from .delete_log import setup as delete_log_setup
     from .show_logs import setup as show_logs_setup
-    from .help import setup as help_setup  # ← 追加
+    from .edit_log import setup as edit_log_setup      # 追加
+    from .search_flavor import setup as search_flavor_setup  # 追加
+    from .help import setup as help_setup
     await register_setup(bot)
     await login_setup(bot)
     await add_log_setup(bot)
     await delete_log_setup(bot)
     await show_logs_setup(bot)
-    await help_setup(bot)  # ← 追加
+    await edit_log_setup(bot)         # 追加
+    await search_flavor_setup(bot)    # 追加
+    await help_setup(bot)
