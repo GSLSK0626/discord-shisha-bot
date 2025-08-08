@@ -3,3 +3,5 @@ Flask-Login
 #sqlite3
 discord.py
 werkzeug
+python-dotenv
+streamlit
