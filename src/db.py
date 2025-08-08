@@ -3,35 +3,33 @@ import sqlite3
 import os
 from config import DB_NAME
 
-DATABASE = 'shisha.db'
-
 def get_db():
     return sqlite3.connect(DB_NAME)
 
 def init_db():
-    if not os.path.exists(DATABASE):
-        with get_db() as conn:
-            c = conn.cursor()
-            c.execute('''
-                CREATE TABLE users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL
-                )
-            ''')
-            c.execute('''
-                CREATE TABLE shisha_logs (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    user_id INTEGER NOT NULL,
-                    date TEXT,
-                    shop_name TEXT,
-                    main_flavor TEXT,
-                    sub_flavor TEXT,
-                    comment TEXT,
-                    FOREIGN KEY(user_id) REFERENCES users(id)
-                )
-            ''')
-            conn.commit()
+    with sqlite3.connect(DB_NAME) as conn:
+        c = conn.cursor()
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                discord_id INTEGER
+            )
+        ''')
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS shisha_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                date TEXT,
+                shop_name TEXT,
+                main_flavor TEXT,
+                sub_flavor TEXT,
+                comment TEXT,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+        ''')
+        conn.commit()
 
 def create_user(username, password_hash):
     with get_db() as conn:
@@ -62,7 +60,7 @@ def get_shisha_logs(user_id):
         return c.fetchall()
 
 def delete_shisha_log(log_id: int):
-    with sqlite3.connect(DB_PATH) as conn:
+    with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
         c.execute("DELETE FROM shisha_logs WHERE id = ?", (log_id,))
         conn.commit()
@@ -76,3 +74,9 @@ def update_shisha_log(log_id, date, shop_name, main_flavor, sub_flavors, comment
             WHERE id = ?
         ''', (date, shop_name, main_flavor, sub_flavors, comment, log_id))
         conn.commit()
+
+def get_all_discord_ids():
+    with get_db() as conn:
+        c = conn.cursor()
+        rows = c.execute("SELECT discord_id FROM users WHERE discord_id IS NOT NULL").fetchall()
+        return [row[0] for row in rows]
