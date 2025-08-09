@@ -51,6 +51,9 @@ if st.session_state['user_id']:
         add_shisha_log(st.session_state['user_id'], date, shop_name, main_flavor, sub_flavor, comment)
         st.success("ログを追加しました。")
 
+    if 'edit_idx' not in st.session_state:
+        st.session_state['edit_idx'] = None
+
     st.header("シーシャログ一覧")
     logs = get_shisha_logs(st.session_state['user_id'])
     for idx, log in enumerate(sorted(logs, key=lambda x: x[2]), start=1):
@@ -59,6 +62,15 @@ if st.session_state['user_id']:
         st.write(f"感想: {log[6]}")
         col1, col2 = st.columns(2)
         if col1.button(f"編集 {idx}"):
+            st.session_state['edit_idx'] = idx
+            st.experimental_rerun()
+        if col2.button(f"削除 {idx}"):
+            delete_shisha_log(log[0])
+            st.warning("削除しました。")
+            st.experimental_rerun()
+
+        # 編集フォームの表示
+        if st.session_state['edit_idx'] == idx:
             new_date = st.text_input(f"新しい日付（現在: {log[2]}）", value=log[2], key=f"edit_date_{idx}")
             new_shop = st.text_input(f"新しい店名（現在: {log[3]}）", value=log[3], key=f"edit_shop_{idx}")
             new_main = st.text_input(f"新しいメイン（現在: {log[4]}）", value=log[4], key=f"edit_main_{idx}")
@@ -67,11 +79,11 @@ if st.session_state['user_id']:
             if st.button(f"保存 {idx}"):
                 update_shisha_log(log[0], new_date, new_shop, new_main, new_sub, new_comment)
                 st.success("修正しました。")
-                st.experimental_rerun()  # 追加
-        if col2.button(f"削除 {idx}"):
-            delete_shisha_log(log[0])
-            st.warning("削除しました。")
-            st.experimental_rerun()  # 追加
+                st.session_state['edit_idx'] = None
+                st.experimental_rerun()
+            if st.button(f"キャンセル {idx}"):
+                st.session_state['edit_idx'] = None
+                st.experimental_rerun()
 
     st.header("フレーバー検索")
     search = st.text_input("検索したいフレーバー名")
