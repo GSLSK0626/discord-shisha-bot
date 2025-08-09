@@ -76,6 +76,7 @@ if st.session_state['user_id']:
             new_main = st.text_input(f"新しいメイン（現在: {log[4]}）", value=log[4], key=f"edit_main_{idx}")
             new_sub = st.text_input(f"新しいサブ（現在: {log[5]}）", value=log[5], key=f"edit_sub_{idx}")
             new_comment = st.text_area(f"新しい感想（現在: {log[6]}）", value=log[6], key=f"edit_comment_{idx}")
+            st.write(f"感想修正完了後、保存ボタンを押して、修正完了を押してください。")
             if st.button(f"保存 {idx}"):
                 update_shisha_log(log[0], new_date, new_shop, new_main, new_sub, new_comment)
                 st.success("修正しました。")
