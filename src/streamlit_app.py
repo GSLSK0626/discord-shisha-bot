@@ -80,7 +80,7 @@ if st.session_state['user_id']:
                 update_shisha_log(log[0], new_date, new_shop, new_main, new_sub, new_comment)
                 st.success("修正しました。")
                 st.session_state['edit_idx'] = None  # 状態変更で再描画
-            if st.button(f"キャンセル {idx}"):
+            if st.button(f"修正完了 {idx}"):
                 st.session_state['edit_idx'] = None  # 状態変更で再描画
 
     st.header("フレーバー検索")
