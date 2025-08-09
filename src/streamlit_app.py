@@ -63,11 +63,11 @@ if st.session_state['user_id']:
         col1, col2 = st.columns(2)
         if col1.button(f"編集 {idx}"):
             st.session_state['edit_idx'] = idx
-            st.experimental_rerun()
+
         if col2.button(f"削除 {idx}"):
             delete_shisha_log(log[0])
             st.warning("削除しました。")
-            st.experimental_rerun()
+            st.session_state['edit_idx'] = None
 
         # 編集フォームの表示
         if st.session_state['edit_idx'] == idx:
@@ -80,11 +80,8 @@ if st.session_state['user_id']:
                 update_shisha_log(log[0], new_date, new_shop, new_main, new_sub, new_comment)
                 st.success("修正しました。")
                 st.session_state['edit_idx'] = None
-                st.experimental_rerun()  # 最新版で有効
-
             if st.button(f"キャンセル {idx}"):
                 st.session_state['edit_idx'] = None
-                st.experimental_rerun()  # 最新版で有効
 
     st.header("フレーバー検索")
     search = st.text_input("検索したいフレーバー名")
